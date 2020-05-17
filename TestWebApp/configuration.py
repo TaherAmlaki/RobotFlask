@@ -1,0 +1,1 @@
+SUITES_DIR = "../Tests"

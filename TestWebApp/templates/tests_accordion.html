@@ -1,0 +1,44 @@
+<div id="accordionTest" style="margin: 5px 0px">
+  {%for test in tests %}
+  <div class="card text-white bg-dark text-card">
+    <div class="card-header" id="headingTest{{ loop.index }}">
+      <div class="row justify-content-between" style="margin:5px; padding:5px">
+        <div class="col-xs-8">
+          <h5>
+            <span style="font-size:medium">Test Name:</span>
+            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTest{{ loop.index }}" aria-expanded="false" aria-controls="collapseTest{{ loop.index }}">
+              <span style="font-size:large">{{ test.TestName }}</span>
+            </button>
+          </h5>
+        </div>
+        <div class="col-xs-2">
+          <input type="checkbox" class="form-check-input" id="testExecuteCheckbox_{{test.TestID}}" onclick="handleTestCheckboxClick()">
+          <label for="testExecuteCheckbox_{{test.TestID}}" class="form-check-label">Include In Execution</label>
+        </div>
+      </div>
+    </div>
+    <div id="collapseTest{{ loop.index }}" class="collapse" aria-labelledby="headingTest{{ loop.index }}" data-parent="#accordionTest">
+      <div class="card-body" style="margin:0; padding:5px">
+        <ul>
+          {% if test.TestTags|length != 0 %}
+            <li>Tags: {{ test.TestTags|join(", ") }}</li>
+          {% endif %}
+          {% if test.TestDocs != "" %}
+            <li>Docs: {{ test.TestDocs }}</li>
+          {% endif %}
+        </ul>
+        <br>
+        <p style="padding:0px 20px"><strong>Test Steps</strong></p>
+        <ul>
+          {% for step in test.TestSteps %}
+          <li>
+            Step {{ loop.index}}: <span class="font-weight-bold">{{ step.step }}</span>
+            <p>--args: {{ step.args|join(", ")}}</p>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css')}}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!--  <script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery351.js') }}">\x3C/script>')</script>-->
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <script type="text/javascript" src="{{ url_for('static', filename='main.js')}}"></script>
+  <title>All Aboard Tests</title>
+</head>
+
+<body>
+  <script type="text/javascript">
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    MapTestIdsToTestNames({{ suites|tojson|safe }});
+  </script>
+  <div class="container title-container">
+      <div class="media" style="padding: 10px 5px">
+        <img class="align-self-start mr-0" src="{{ url_for('static', filename='all_aboard.png') }}" alt="All Aboard Image">
+        <div class="media-body mt-1" style="margin:0">
+          <h2 class="home-title-h1 text-center d-inline-block">All-Aboard Automated Tests</h2>
+          <h5 class="mt-2">{{ test_numbers }} Tests</h5>
+        </div>
+      </div>
+  </div>
+  <div class="home-container">
+    <div id="accordionSuites">
+      <div class="container">
+        {%for suite in suites %}
+        <div class="card home-suite-card">
+          <div class="card-header" id="heading{{ loop.index }}">
+            <div class="row justify-content-between" style="padding:10px">
+              <div class="col-xs-8 my-auto">
+                <h5>
+                  <span style="font-size:medium">Suite Name:</span>
+                  <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                    <span style="font-size:large">{{ suite.SuiteName }}</span>
+                  </button>
+                </h5>
+              </div>
+              <div class="col-xs-2 my-auto">
+                <h5 class="text-right"> -- {{ suite.Tests|length }} Tests</h5>
+              </div>
+            </div>
+
+          </div>
+          <div id="collapse{{ loop.index }}" class="collapse" aria-labelledby="heading{{ loop.index }}" data-parent="#accordionSuites">
+            <div class="card-body" style="padding:0; margin:0">
+              {% with tests=suite.Tests %}
+                {% include "tests_accordion.html" %}
+              {% endwith %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% include "tests_to_execute.html" %}
+  </div>
+
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<!--  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>-->
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+
+</html>
