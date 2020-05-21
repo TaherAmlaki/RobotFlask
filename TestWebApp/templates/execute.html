@@ -19,14 +19,11 @@
   <script type="text/javascript">
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
   </script>
-<!--  <div class="container title-container align-items-center">-->
-<!--      -->
-<!--  </div>-->
   <div class="container align-items-center title-container">
         <div class="media" style="padding: 10px 5px; margin:0 auto">
-        <img class="align-self-start mr-0" src="{{ url_for('static', filename='all_aboard.png') }}" alt="All Aboard Image">
+        <img class="align-self-start mr-0" src="{{ url_for('static', filename='my_icon.png') }}" alt="Icon Image">
         <div class="media-body">
-            <h2 class="home-title-h1 text-center d-inline">All-Aboard Automated Tests Execution</h2>
+            <h2 class="home-title-h1 text-center d-inline">Tests Execution</h2>
             <br>
             <p class="mt-2 d-inline">{{ tests.Tests|length }} Tests</p>
         </div>
