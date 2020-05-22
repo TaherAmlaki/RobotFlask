@@ -30,6 +30,7 @@ class GetSuiteInfo:
         for suite_path in suites:
             try:
                 suite_data = TestData(parent=None, source=suite_path)
+                print("dict is", suite_data.__dict__.keys())
             except NoTestsFound:
                 data = {GetSuiteInfo.SUITE_PATH: suite_path,
                         GetSuiteInfo.SUITE_SHORT_PATH: GetSuiteInfo.get_short_path(suite_path)}
