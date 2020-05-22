@@ -10,6 +10,7 @@ class GetSuiteInfo:
     TESTS_DIR = os.path.join(PROJECT_DIR, configuration.SUITES_DIR)
 
     SUITE_NAME = "SuiteName"
+    SUITE_ID = "SuiteID"
     SUITE_PATH = "SuitePath"
     SUITE_SHORT_PATH = "SuiteShortPath"
     SUITE_VARIABLES = "SuiteVariables"
@@ -36,6 +37,7 @@ class GetSuiteInfo:
                 variables = [{"VarName": v.name, "VarValue": v.value} for v in suite_data.variable_table.variables]
                 tests, children = GetSuiteInfo.get_tests_for_suite(suite_path)
                 data = {GetSuiteInfo.SUITE_NAME: suite_data.name,
+                        GetSuiteInfo.SUITE_ID: secrets.token_hex(8),
                         GetSuiteInfo.SUITE_PATH: os.path.abspath(suite_data.source),
                         GetSuiteInfo.SUITE_SHORT_PATH: GetSuiteInfo.get_short_path(suite_path),
                         GetSuiteInfo.SUITE_VARIABLES: variables,

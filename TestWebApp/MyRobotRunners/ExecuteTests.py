@@ -11,9 +11,9 @@ class ExecuteRobotTests:
     def execute(self, suites: list, tests: list = None, options: dict = None):
         if options is None:
             options = {}
-        if options.get("log") is None:
-            now = datetime.now().strftime("%Y%m%d_%H%M%S")
-            options['log'] = f"RobotLog_{now}.html"
+        # if options.get("log") is None:
+        #     now = datetime.now().strftime("%Y%m%d_%H%M%S")
+        #     options['log'] = f"RobotLog_{now}.html"
         if options.get("listener") is None:
             self.listener = RobotListenerExecution()
             options['listener'] = self.listener
