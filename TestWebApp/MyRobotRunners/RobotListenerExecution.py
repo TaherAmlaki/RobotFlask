@@ -5,31 +5,28 @@ class RobotListenerExecution:
         self.tests = {}
         self._current_test_keywords = []
         self._current_test = None
-
-    def start_suite(self, name, attributes):
-        pass
+        self._level = 0
 
     def start_test(self, name, attributes):
+        self._level = 1
         self._current_test_keywords = []
         self._current_test = name
         self.tests[self._current_test] = {"keywords": [], "status": "running"}
 
     def start_keyword(self, name, attributes):
-        self._current_test_keywords.append(attributes.get("kwname", name.split(".")[-1]))
-        self.tests[self._current_test]["keywords"] = self._current_test_keywords.copy()
+        if self._level < 2:
+            self._current_test_keywords.append(attributes.get("kwname", name.split(".")[-1]))
+            self.tests[self._current_test]["keywords"] = self._current_test_keywords.copy()
+        self._level += 1
 
     def end_keyword(self, name, attributes):
-        pass
+        self._level -= 1
 
     def log_message(self, message):
-        self._current_test_keywords.append('log')
-        self.tests[self._current_test]["keywords"] = self._current_test_keywords.copy()
+        if self._level < 2:
+            self._current_test_keywords.append('log')
+            self.tests[self._current_test]["keywords"] = self._current_test_keywords.copy()
 
     def end_test(self, name, attributes):
         self.tests[name] = {"keywords": self._current_test_keywords, "status": attributes.get("status", "pass")}
-
-    def end_suite(self, name, attributes):
-        pass
-
-    def close(self):
-        pass
+        self._level = 0

@@ -1,7 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import messagebox
-import logging
 from TkinterGui.Pages.PageName import PAGE
 from MyRobotRunners.GetTests import GetSuiteInfo
 from TkinterGui.Pages.HomeGUI import RobotMainFrame
@@ -17,11 +16,11 @@ def set_ttk_styles():
 
 
 class MainWindow(tk.Tk):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, suites_data):
+        super().__init__()
         set_ttk_styles()
+        self.suites_data = suites_data
 
-        self.suites_data = GetSuiteInfo.retrieve_all_tests()
         self._container = ttk.Frame(self)
         self._container.pack(side="top", fill="both", expand=True)
         self._container.grid_rowconfigure(0, weight=1)
@@ -36,7 +35,8 @@ class MainWindow(tk.Tk):
         except tk.TclError:
             pass
         self.frames = {}
-        self._page_dict = {PAGE.ROBOT_HOME_PAGE: RobotMainFrame, PAGE.ROBOT_TEST_PAGE: RobotTestFrame}
+        self._page_dict = {PAGE.ROBOT_HOME_PAGE: RobotMainFrame,
+                           PAGE.ROBOT_TEST_PAGE: RobotTestFrame}
         self.show_page(PAGE.ROBOT_HOME_PAGE, suites_data=self.suites_data)
 
     def show_page(self, page: PAGE, **kwargs):
@@ -54,13 +54,11 @@ class MainWindow(tk.Tk):
 
 if __name__ == "__main__":
     try:
-        app = MainWindow()
+        suite_data = GetSuiteInfo.retrieve_all_tests()
+        app = MainWindow(suite_data)
         app.protocol("WM_DELETE_WINDOW", app.on_closing)
         app.mainloop()
     except Exception as ex:
         res = messagebox.showinfo("Critical Error",
                                   f"A critical exception occurred and we cannot continue. {type(ex).__name__}"
                                   f", {str(ex)}")
-        logging.error("Critical Error",
-                      f"A critical exception occurred and we cannot continue. {type(ex).__name__}"
-                      f", {str(ex)}")

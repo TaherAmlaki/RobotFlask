@@ -3,7 +3,7 @@
   <div class="card text-white bg-dark text-card">
     <div class="card-header" id="headingTest{{ loop.index }}">
       <div class="row justify-content-between" style="margin:5px; padding:5px">
-        <div class="col-xs-8">
+        <div class="col-md-8 col-sm-12">
           <h5>
             <span style="font-size:medium">Test Name:</span>
             <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTest{{ loop.index }}" aria-expanded="false" aria-controls="collapseTest{{ loop.index }}">
@@ -11,8 +11,8 @@
             </button>
           </h5>
         </div>
-        <div class="col-xs-2">
-          <input type="checkbox" class="form-check-input" id="testExecuteCheckbox_{{test.TestID}}" onclick="handleTestCheckboxClick()">
+        <div class="col-md-4 col-sm-12 text-right">
+          <input type="checkbox" class="form-check-input" id="testExecuteCheckbox_{{test.TestID}}">
           <label for="testExecuteCheckbox_{{test.TestID}}" class="form-check-label">Include In Execution</label>
         </div>
       </div>

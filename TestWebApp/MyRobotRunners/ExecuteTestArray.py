@@ -1,4 +1,4 @@
-from threading import Thread
+from datetime import datetime
 from MyRobotRunners.ExecuteTests import ExecuteRobotTests
 from MyRobotRunners.RobotListenerExecution import RobotListenerExecution
 
@@ -11,15 +11,48 @@ class ExecutionManager:
         self._listener = RobotListenerExecution()
         self.test2steps = {}
         self._test2ids = {}
+        self._robot_suites = []
+        self._robot_tests = []
+        self.prepared_tests = []
+        self.log = None
+        self._prepare_data()
+
+    def _prepare_data(self):
+        self._map_tests()
+        suites = []
+        tests = []
+        for test in self._tests['Tests']:
+            if test['type'] == 'suite':
+                tests += [t['TestName'] for t in test['data']['Tests']]
+                suite_relative_path = test['data']['SuiteShortPath']
+                suites.append(suite_relative_path)
+
+                for t in test['data']['Tests']:
+                    test_relative_path = suite_relative_path + "/" + t['TestName']
+                    self.prepared_tests.append({"TestName": t['TestName'],
+                                                'TestID': t['TestID'],
+                                                "RelativePath": test_relative_path})
+            else:
+                tests.append(test['data']['TestName'])
+                suites.append(test['data']['SuiteShortPath'])
+                test_relative_path = test['data']['SuiteShortPath'] + "/" + test['data']['TestName']
+                self.prepared_tests.append({"TestName": test['data']['TestName'],
+                                            'TestID': test['data']['TestID'],
+                                            "RelativePath": test_relative_path})
+        self._robot_suites = list(set(suites))
+        self._robot_tests = list(set(tests))
+        if self._tests.get("log"):
+            now = datetime.now().strftime("%Y%m%d_%H%M%S")
+            self.log = f"log_{now}.html"
 
     def start(self):
-        self._map_tests()
-        suites = list(set([t['SuiteShortPath'] for t in self._tests['Tests']]))
-        tests = [t['TestName'] for t in self._tests['Tests']]
-        execution = ExecuteRobotTests()
-        execution.execute(suites, tests, {"listener": self._listener})
 
-    def get_status(self):
+        options = {"listener": self._listener, 'log': self.log}
+        execution = ExecuteRobotTests()
+        execution.execute(self._robot_suites, self._robot_tests, options)
+
+    @property
+    def status(self):
         percentages = {}
         for test_name, keywords_status in self._listener.tests.items():
             keywords = [k.lower() for k in keywords_status['keywords']]

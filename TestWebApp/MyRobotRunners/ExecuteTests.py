@@ -1,19 +1,21 @@
 from robot import run
-from datetime import datetime
+import secrets
 from MyRobotRunners.RobotListenerExecution import RobotListenerExecution
 
 
 class ExecuteRobotTests:
     def __init__(self):
         self.listener = None
-        self.execution_threads = []
+        self.log_file = None
 
     def execute(self, suites: list, tests: list = None, options: dict = None):
         if options is None:
             options = {}
-        # if options.get("log") is None:
-        #     now = datetime.now().strftime("%Y%m%d_%H%M%S")
-        #     options['log'] = f"RobotLog_{now}.html"
+        if options.get("log"):
+            options['outputdir'] = "../RobotReports"
+        else:
+            options['output'] = None
+            options['report'] = None
         if options.get("listener") is None:
             self.listener = RobotListenerExecution()
             options['listener'] = self.listener
@@ -23,10 +25,10 @@ class ExecuteRobotTests:
 
 
 # runner = ExecuteRobotTests()
-# suites = [r"G:\Mijn Documenten\pega-testfiles\outreach\Test suites\reminderProcessTestCases.robot"]
-# tests = ["NP Nationality Flow - No EDB"]
-# options = {"dryrun": "yes"}
-# runner.execute(suites, tests, options)
+# suites = ['../../Tests/GetStarWarsFilms.robot', '../../Tests/GetStarWarsPlanets.robot']
+# tests = ['Get Film 1']
+# # options = {"dryrun": "yes"}
+# runner.execute(suites, tests)
 # links = runner.listener.links
 # print(len(links))
 # for i in range(10):

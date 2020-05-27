@@ -2,16 +2,13 @@
 <html lang="en">
 
 <head>
-  <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css')}}">
 <!--  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
 <!--  <script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery351.js') }}">\x3C/script>')</script>-->
   <script src="{{url_for('static', filename='jquery351.js') }}"></script>
-  <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <script type="text/javascript" src="{{ url_for('static', filename='execute.js')}}"></script>
   <title>Execute Tests</title>
 </head>
 
@@ -20,32 +17,48 @@
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
   </script>
   <div class="container align-items-center title-container">
-        <div class="media" style="padding: 10px 5px; margin:0 auto">
+        <div class="media" style="padding: 10px; margin:auto">
         <img class="align-self-start mr-0" src="{{ url_for('static', filename='my_icon.png') }}" alt="Icon Image">
         <div class="media-body">
-            <h2 class="home-title-h1 text-center d-inline">Tests Execution</h2>
+            <h3 class="home-title-h1 text-center d-inline">Tests Execution</h3>
             <br>
-            <p class="mt-2 d-inline">{{ tests.Tests|length }} Tests</p>
+            <p class="mt-2 d-inline">{{ tests|length }} Tests</p>
         </div>
       </div>
   </div>
   <div class="container">
-      {% for test in tests.Tests %}
-      <div class="row test-execution-row align-items-center">
-          <div class="col-md-8 col-sm-12">
-              <div class="d-flex p-2">{{ test.SuiteShortPath }}/{{ test.TestName }}</div>
-          </div>
-          <div class="col-md-4 col-sm-12">
-              <div class="progress">
-                  <div class="progress-bar progress-bar-stripped bg-success" role="progressbar" style="width:0%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" id="pb_{{ test.TestID }}">0%</div>
-              </div>
-          </div>
+
+    <div class="row align-items-center justify-content-center h-100">
+      <div class="col-md-8">
+        <div class="alert alert-success collapse" id="resultMsg">
+          <a href="#" class="close" data-dismiss="alert">&times;</a>
+          <p id="resultMsgText"></p>
+          <hr>
+          <p class="mb-0" id="resultHtmlLogP">Robot framework html log, <a href="#" id="resultHtmlLink"></a>, is available.</p>
+        </div>
       </div>
-      {% endfor %}
+    </div>
+
+    {% for test in tests %}
+    <div class="row test-execution-row align-items-center">
+        <div class="col-md-8 col-sm-12">
+            <div class="d-flex p-2">Test: {{ test.RelativePath }}</div>
+        </div>
+        <div class="col-md-4 col-sm-12">
+            <div class="progress">
+                <div class="progress-bar progress-bar-stripped bg-success" role="progressbar" style="width:0%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" id="pb_{{ test.TestID }}">0%</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='execute.js')}}"></script>
+  <script type="text/javascript">
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+  </script>
 </body>
 
 </html>
