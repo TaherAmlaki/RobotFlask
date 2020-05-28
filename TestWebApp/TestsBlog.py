@@ -23,7 +23,7 @@ def home():
 @app.route("/_execution_start", methods=["POST"])
 def _execution_start():
     global tests_to_execute, execution_manager, execution_thread
-    tests_to_execute = {"Tests": request.json['tests'], "parallel": request.json['tests'], "log": request.json['log']}
+    tests_to_execute = {"Tests": request.json['tests'], "log": request.json['log']}
     execution_manager = ExecutionManager(tests=tests_to_execute, suites=suites)
     execution_thread = Thread(target=execution_manager.start)
     execution_thread.start()
@@ -43,7 +43,7 @@ def _execution_status():
         return jsonify(tests=execution_manager.status, execution="running")
     else:
         execution_thread.join()
-        return jsonify(tests=execution_manager.status, execution="done", log=execution_manager.log)
+        return jsonify(tests=execution_manager.status, execution="done", logs=execution_manager.logs)
 
 
 @app.route("/view-report/<log>")

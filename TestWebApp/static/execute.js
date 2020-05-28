@@ -54,9 +54,9 @@ function PeriodicCheckOfExecutionStatus(){
                   $("#resultMsgText").html(msg);
                 }
 
-                if (result.hasOwnProperty("log") && result['log'] != null){
-                  $("#resultHtmlLink").html(result['log']);
-                  $("#resultHtmlLink").attr("href", "/view-report/" + result['log']);
+                if (result.hasOwnProperty("logs") && result['logs'] != null && 0 < result['logs'].length){
+                  $("#resultHtmlLink").html(result['logs'][0]);
+                  $("#resultHtmlLink").attr("href", "/view-report/" + result['logs'][0]);
                 } else {
                   $("#resultHtmlLogP").remove();
                 }
