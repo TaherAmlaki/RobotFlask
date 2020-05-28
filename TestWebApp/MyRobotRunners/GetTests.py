@@ -2,12 +2,12 @@ import os
 import secrets
 from robot.parsing.model import TestData
 from robot.parsing.populators import NoTestsFound
-import configuration
+import ConfigurationHelper
 
 
 class GetSuiteInfo:
     PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    TESTS_DIR = os.path.join(PROJECT_DIR, configuration.SUITES_DIR)
+    TESTS_DIR = os.path.join(PROJECT_DIR, ConfigurationHelper.parse_configuration_file())
 
     SUITE_NAME = "SuiteName"
     SUITE_ID = "SuiteID"

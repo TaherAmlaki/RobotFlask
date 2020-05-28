@@ -1,1 +1,0 @@
-SUITES_DIR = "../Tests"

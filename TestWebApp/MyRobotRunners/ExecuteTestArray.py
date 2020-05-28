@@ -32,11 +32,11 @@ class ExecutionManager:
     def status(self):
         percentages = {}
         for listener in self._listeners:
-            for test_name, keywords_status in listener.tests.items():
+            for test_suite_name, keywords_status in listener.tests.items():
                 keywords = [k.lower() for k in keywords_status['keywords']]
-                test_full_keywords = self.test2steps[test_name]
+                test_full_keywords = self.test2steps[test_suite_name]
                 p = 100.0 * len([s for s in test_full_keywords if s in keywords]) / len(test_full_keywords)
-                percentages[self._test2ids[test_name]] = [round(p), keywords_status['status']]
+                percentages[self._test2ids[test_suite_name]] = [round(p), keywords_status['status']]
         return percentages
 
     def _prepare_data(self):
@@ -67,7 +67,7 @@ class ExecutionManager:
         self.test2steps = {}
         for suite in self._suites:
             for test in suite.get("Tests", []):
-                self.test2steps[test['TestName']] = [str(step['step']).lower() for step in test['TestSteps']]
-                self._test2ids[test['TestName']] = test['TestID']
+                self.test2steps[(suite['SuiteName'], test['TestName'])] = [str(step['step']).lower() for step in test['TestSteps']]
+                self._test2ids[(suite['SuiteName'], test['TestName'])] = test['TestID']
 
 
