@@ -28,7 +28,7 @@ function PeriodicCheckOfExecutionStatus(){
         },
         complete: function(){
             if (done === false){
-                setTimeout(PeriodicCheckOfExecutionStatus, 500);
+                setTimeout(PeriodicCheckOfExecutionStatus, 2000);
             } else {
               console.log(result);
               if (result != null && result.hasOwnProperty("execution")){
@@ -55,10 +55,14 @@ function PeriodicCheckOfExecutionStatus(){
                 }
 
                 if (result.hasOwnProperty("logs") && result['logs'] != null && 0 < result['logs'].length){
-                  $("#resultHtmlLink").html(result['logs'][0]);
-                  $("#resultHtmlLink").attr("href", "/view-report/" + result['logs'][0]);
+                  let ul = $("#logsUL");
+                  for(let i=0; i< result['logs'].length; i++){
+                    let li = '<li><a href="/view-report/'+ result['logs'][i] + '#">'+ result['logs'][i] + '</a></li>';
+                    ul.append(li);
+                  }
                 } else {
                   $("#resultHtmlLogP").remove();
+                  $("#logsUL").remove();
                 }
                 $("#resultMsg").show('fade');
               }

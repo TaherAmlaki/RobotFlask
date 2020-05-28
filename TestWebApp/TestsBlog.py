@@ -23,7 +23,7 @@ def home():
 @app.route("/_execution_start", methods=["POST"])
 def _execution_start():
     global tests_to_execute, execution_manager, execution_thread
-    tests_to_execute = {"Tests": request.json['tests'], "log": request.json['log']}
+    tests_to_execute = {"Tests": request.json['tests'], "log": request.json['log'], "parallel": request.json['parallel']}
     execution_manager = ExecutionManager(tests=tests_to_execute, suites=suites)
     execution_thread = Thread(target=execution_manager.start)
     execution_thread.start()
