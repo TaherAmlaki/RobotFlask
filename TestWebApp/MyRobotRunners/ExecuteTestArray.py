@@ -1,18 +1,18 @@
 from datetime import datetime
-import concurrent.futures
-import multiprocessing
+from multiprocessing import cpu_count, Pool, Manager
 from MyRobotRunners.ExecuteTests import ExecuteRobotTests
 from MyRobotRunners.RobotListenerExecution import RobotListenerExecution
 
 
 class ExecutionManager:
-    MAX_NUMBER_OF_WORKERS = 4
+    MAX_NUMBER_OF_WORKERS = cpu_count() - 1
 
     def __init__(self, tests, suites):
         self._tests = tests
         self._suites = suites
         self._threads = []
         self._listeners = []
+        self._executors = []
         self.test2steps = {}
         self._test2ids = {}
         self._robot_suites = []
@@ -20,45 +20,54 @@ class ExecutionManager:
         self._parallel_data = []
         self.prepared_tests = []
         self.logs = []
+        self._queue = None
         self._prepare_data()
 
     def start(self):
+        manager = Manager()
+        self._queue = manager.Queue()
+
+        test_data = []
         if self._tests.get("parallel", False):
             max_workers = min(ExecutionManager.MAX_NUMBER_OF_WORKERS, len(self._parallel_data))
-            with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
-                processes = []
-                for test in self._parallel_data:
-                    self._listeners.append(RobotListenerExecution())
-                    options = {"listener": self._listeners[-1], 'log': None}
-                    if self._tests.get("log"):
-                        now = datetime.now().strftime("%Y%m%d_%H%M%S")
-                        self.logs.append(f"log__{test['logName']}__{now}.html")
-                        options['log'] = self.logs[-1]
-                    robot_executor = ExecuteRobotTests()
-                    p = executor.submit(robot_executor.execute, test['SuitePath'], test['TestName'], options)
-                    processes.append(p)
-                # TODO: handle exceptions by iterating through results
-
+            for test in self._parallel_data:
+                listener = RobotListenerExecution()
+                options = {"listener": listener, 'log': None}
+                if self._tests.get("log"):
+                    now = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    self.logs.append(f"log__{test['logName']}__{now}.html")
+                    options['log'] = self.logs[-1]
+                test_data.append([test['SuitePath'], test['TestName'], options, self._queue])
         else:
-            self._listeners.append(RobotListenerExecution())
-            options = {"listener": self._listeners[0], 'log': None}
+            max_workers = 1
+            options = {"listener": RobotListenerExecution(), 'log': None}
             if self._tests.get("log"):
                 now = datetime.now().strftime("%Y%m%d_%H%M%S")
                 self.logs.append(f"log__{now}.html")
                 options['log'] = self.logs[0]
-            robot_executor = ExecuteRobotTests()
-            robot_executor.execute(self._robot_suites, self._robot_tests, options)
+            consecutive_data = [self._robot_suites, self._robot_tests, options, self._queue]
+            test_data.append(consecutive_data)
+
+        pool = Pool(max_workers)
+        pool.map(ExecuteRobotTests().execute, test_data)
+        pool.close()
+        pool.join()
 
     @property
     def status(self):
         percentages = {}
-        for listener in self._listeners:
-            print("listener data is: ", listener.tests)
-            for test_suite_name, keywords_status in listener.tests.items():
-                keywords = [k.lower() for k in keywords_status['keywords']]
-                test_full_keywords = self.test2steps[test_suite_name]
-                p = 100.0 * len([s for s in test_full_keywords if s in keywords]) / len(test_full_keywords)
-                percentages[self._test2ids[test_suite_name]] = [round(p), keywords_status['status']]
+        if self._queue is None:
+            return percentages
+
+        while not self._queue.empty():
+            data = self._queue.get()
+            if data:
+                for test_suite_name, val in data.items():
+                    keywords = [k.lower() for k in val['keywords']]
+                    status = val['status']
+                    test_full_keywords = self.test2steps[test_suite_name]
+                    p = 100.0 * len([s for s in test_full_keywords if s in keywords]) / len(test_full_keywords)
+                    percentages[self._test2ids[test_suite_name]] = [round(p), status]
         return percentages
 
     def _prepare_data(self):
