@@ -23,7 +23,8 @@ class RobotOverviewListener:
 
     def end_test(self, name, attributes):
         self._current_suite[self.SUITE_TESTS].append(self._current_test.copy())
+        self._current_test = {}
 
     def end_suite(self, name, attributes):
         self.suites.append(self._current_suite.copy())
-
+        self._current_suite = {}

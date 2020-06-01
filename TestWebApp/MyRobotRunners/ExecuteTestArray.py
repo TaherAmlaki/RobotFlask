@@ -10,9 +10,6 @@ class ExecutionManager:
     def __init__(self, tests, suites):
         self._tests = tests
         self._suites = suites
-        self._threads = []
-        self._listeners = []
-        self._executors = []
         self.test2steps = {}
         self._test2ids = {}
         self._robot_suites = []
@@ -111,5 +108,3 @@ class ExecutionManager:
             for test in suite.get("Tests", []):
                 self.test2steps[(suite['SuiteName'], test['TestName'])] = [str(step['step']).lower() for step in test['TestSteps']]
                 self._test2ids[(suite['SuiteName'], test['TestName'])] = test['TestID']
-
-
